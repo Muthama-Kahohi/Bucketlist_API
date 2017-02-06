@@ -94,7 +94,7 @@ class test_bucketlists(BaseTests):
         delete_bucketlist = self.client.delete('bucketlist/api/bucketlists/2',
                                                content_type='application/json',
                                                headers=token)
-        self.assertEqual(delete_bucketlist.status_code, 400)
+        self.assertEqual(delete_bucketlist.status_code, 404)
         output = json.loads(delete_bucketlist.data)
         self.assertEqual(output['message'], 'Bucketlist does not exist')
 
@@ -120,14 +120,14 @@ class test_bucketlists(BaseTests):
                                              data=self.bucket,
                                              content_type='application/json',
                                              headers=token)
-        self.assertEqual(create_bucketlist.status_code, 200)
+        self.assertEqual(create_bucketlist.status_code, 201)
         self.update = json.dumps(
             {'Bucketname': 'Add Bucketlist Functionality'})
         update_bucketlist = self.client.put('bucketlist/api/bucketlists/1',
                                             data=self.update,
                                             content_type='application/json',
                                             headers=token)
-        self.assertEqual(update_bucketlist.status_code, 200)
+        self.assertEqual(update_bucketlist.status_code, 201)
 
     def test_getting_a_bucketlist_that_does_not_exist(self):
         token = self.get_token()
@@ -141,6 +141,24 @@ class test_bucketlists(BaseTests):
         get_bucketlist = self.client.get('bucketlist/api/bucketlists/2',
                                          content_type='application/json',
                                          headers=token)
-        self.assertEqual(get_bucketlist.status_code, 400)
+        self.assertEqual(get_bucketlist.status_code, 404)
         output = json.loads(get_bucketlist.data)
-        self.assertEqual(output['message'], 'Bucketlist doe not exist')
+        self.assertEqual(output['message'], 'Bucketlist does not exist')
+
+    def test_post_new_item(self):
+        token = self.get_token()
+        # Create bucketlist
+        self.bucket = json.dumps(
+            {'Bucketname': 'Handling Authentication Tests'})
+        create_bucketlist = self.client.post('bucketlist/api/bucketlists',
+                                             data=self.bucket,
+                                             content_type='application/json',
+                                             headers=token)
+        self.assertEqual(create_bucketlist.status_code, 201)
+        # create bucket item
+        self.item = json.dumps({'item_name': 'Meeting with P&C'})
+        create_item = self.client.post('bucketlist/api/bucketlists/1/items',
+                                       data=self.item,
+                                       headers=token,
+                                       content_type='application/json')
+        self.assertEqual(create_item.status_code, 201)
