@@ -23,6 +23,7 @@ def verify_token(token):
 
 
 class RegisterApi(Resource):
+    '''Registers a new user'''
 
     def post(self):
         '''Receives credentials and registers a new user using
@@ -50,10 +51,13 @@ class RegisterApi(Resource):
             return ({'message': 'user alredy exists'}, 400)
 
     def get(self):
+        '''Ensures that get method is not allowed for registration'''
         return({'message': 'Method is not allowed'}, 405)
 
 
 class LoginApi(Resource):
+    '''Logs in a user into the api. Give  the user a token to perfom transactions as authentication.'''
+
     def post(self):
         parser = reqparse.RequestParser()
         parser.add_argument('username', required=True,
@@ -78,28 +82,34 @@ class LoginApi(Resource):
                 return({'message': 'wrong username/password combination'}, 401)
 
     def get(self):
+        '''Ensures that get method not allowed in logging in'''
         return({'message': 'Method is not allowed'}, 405)
 
 
 class BucketLists(Resource):
+    '''Adds and retrieves bucketlists to and from the database'''
     @auth.login_required
     def get(self):
+        # Adds page and limit variables to be used for pagination
         page = request.args.get('page', 1)
         limit = request.args.get('limit', 1) or 100
+        # Adds a query attribute specified in the url
         q = request.args.get('q')
         if q:
+            # Searches bucketlists for one with the given query
             buckets = Bucketlist.query.filter(Bucketlist.bucketlist_name.ilike(
                 '%' + q + "%")).filter_by(created_by=g.user.id).paginate(int(page), int(limit), False)
             bkts = buckets.items
             if buckets:
                 if buckets.has_next:
                     next_page = str(
-                        request.url_root) + 'bucketlist/api/bucketlists?q=' + q + '&page=' + str(int(page)+ 1)
+                        request.url_root) + 'bucketlist/api/bucketlists?q=' + q + '&page=' + str(int(page) + 1)
                 else:
                     next_page = 'None'
 
                 if buckets.has_prev:
-                    prev = str(request.url_root) + 'bucketlist/api/bucketlists?q=' + q + '&page=' + str(int(page) - 1)
+                    prev = str(request.url_root) + 'bucketlist/api/bucketlists?q=' + \
+                        q + '&page=' + str(int(page) - 1)
                 else:
                     prev = 'None'
                 buckets = [bucket for bucket in bkts]
@@ -127,7 +137,8 @@ class BucketLists(Resource):
                     next_page = 'None'
 
                 if buckets.has_prev:
-                    prev = str(request.url_root) + 'bucketlist/api/bucketlists?limit=' + str(int(limit)) + '&page=' + str(int(page) - 1)
+                    prev = str(request.url_root) + 'bucketlist/api/bucketlists?limit=' + \
+                        str(int(limit)) + '&page=' + str(int(page) - 1)
 
                 else:
                     prev = 'None'
@@ -138,15 +149,15 @@ class BucketLists(Resource):
                     'prev': prev}
                 return response
 
-
     @auth.login_required
     def post(self):
-
+        '''Adds a new bucketlist'''
         parser = reqparse.RequestParser()
         parser.add_argument('Bucketname', required=True,
                             help="Bucket name cannot be blank")
         bucketlist = parser.parse_args()
         bucketname = bucketlist['Bucketname']
+        # Ensures that bucketlist name is not empty
         if len(bucketname) > 0:
             bucket = Bucketlist.query.filter_by(
                 bucketlist_name=bucketname).first()
@@ -163,6 +174,7 @@ class BucketLists(Resource):
 
 
 class BucketList(Resource):
+    '''Retrievs specific bucketlist using an id'''
     @auth.login_required
     def get(self, id):
         bucketlists = Bucketlist.query.filter_by(
@@ -173,7 +185,10 @@ class BucketList(Resource):
             return ({'message': 'Bucketlist does not exist'}, 404)
 
     @auth.login_required
+    '''Updates a specific bucketlist using the id'''
+
     def put(self, id):
+        # Queries the db to ensure that search a bucketlist exists
         bucketlist = Bucketlist.query.filter_by(
             id=id, created_by=g.user.id).first()
         if bucketlist:
@@ -190,6 +205,7 @@ class BucketList(Resource):
 
     @auth.login_required
     def delete(self, id):
+        '''deletes specific bucketlist as per the id provided'''
         bucketlist = Bucketlist.query.filter_by(
             id=id, created_by=g.user.id).first()
         if bucketlist:
@@ -202,6 +218,7 @@ class BucketList(Resource):
 class BucketListItems(Resource):
     @auth.login_required
     def post(self, id):
+        '''Adds a item to a bucketlist id given'''
         parser = reqparse.RequestParser()
         parser.add_argument('item_name', required=True,
                             help='Item name cannot be blank')
@@ -222,6 +239,8 @@ class BucketListItems(Resource):
 
 
 class BucketItem(Resource):
+    '''Updates a bucketlist item with item_id in bucketlist with id bucket_id'''
+
     @auth.login_required
     def put(self, bucket_id, item_id):
         print(bucket_id, item_id)
@@ -235,6 +254,7 @@ class BucketItem(Resource):
 
         blist_item = BucketListItem.query.filter_by(
             id=item_id, bucketlist_name=bucket_id).first()
+        # Filters what item details are to be updated
         if blist_item:
             if item_name and done:
                 blist_item.item_name = item_name
@@ -252,6 +272,7 @@ class BucketItem(Resource):
 
     @auth.login_required
     def delete(self, bucket_id, item_id):
+        '''Deletes bucketlist item with provided id'''
         blist_item = BucketListItem.query.filter_by(
             id=item_id, bucketlist_name=bucket_id).first()
         if blist_item:
