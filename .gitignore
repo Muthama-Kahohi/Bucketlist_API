@@ -1,5 +1,5 @@
 #Environment
-b_env/
+flask/
 
 #byte objects #
 *.pyc

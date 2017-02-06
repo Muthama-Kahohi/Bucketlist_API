@@ -1,7 +1,7 @@
 from bucketlist import create_app, db, api
 from flask import json
 import unittest
-from bucketlist.app import BucketListItem, BucketListItems, LoginApi, RegisterApi, BucketLists, BucketList
+from bucketlist.app import BucketItem, BucketListItems, LoginApi, RegisterApi, BucketLists, BucketList
 
 
 class BaseTests(unittest.TestCase):
@@ -30,7 +30,7 @@ class BaseTests(unittest.TestCase):
             BucketListItems, '/bucketlists/<int:id>/items', )
 
         api.add_resource(
-            BucketListItem, '/bucketlists/<int:id>/items/<int:item_id>', )
+            BucketItem, '/bucketlists/<int:id>/items/<int:item_id>', )
 
         self.valid_credentials = json.dumps(
             {"username": "kahohi", "password": "ilove@123"})

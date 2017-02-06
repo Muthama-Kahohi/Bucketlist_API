@@ -185,9 +185,8 @@ class BucketList(Resource):
             return ({'message': 'Bucketlist does not exist'}, 404)
 
     @auth.login_required
-    '''Updates a specific bucketlist using the id'''
-
     def put(self, id):
+        '''Updates a specific bucketlist using the id'''
         # Queries the db to ensure that search a bucketlist exists
         bucketlist = Bucketlist.query.filter_by(
             id=id, created_by=g.user.id).first()

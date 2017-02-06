@@ -4,6 +4,7 @@ import json
 
 class test_bucketlists(BaseTests):
     def get_token(self):
+        '''Registers a user and logd=s them in to acquire a token to be used for the tests that require authentication'''
         response = self.client.post('/bucketlist/api/auth/register',
                                     data=self.valid_credentials,
                                     content_type='application/json')
@@ -15,6 +16,7 @@ class test_bucketlists(BaseTests):
         return {'Authorization': 'Token ' + token}
 
     def test_successful_creation_of_a_bucketlist(self):
+        '''Tests bucketlist is successfully created'''
         self.bucket = json.dumps(
             {'Bucketname': 'Handling Authentication Tests'})
         create_bucketlist = self.client.post('bucketlist/api/bucketlists',
@@ -26,6 +28,7 @@ class test_bucketlists(BaseTests):
         self.assertEqual(output['message'], 'Bucketlist successfully created')
 
     def test_creation_of_already_existing_bucketlist(self):
+        '''Ensures that no two bucketlists have the same name'''
         token = self.get_token()
         self.bucket = json.dumps(
             {'Bucketname': 'Handling Authentication Tests'})
@@ -45,11 +48,13 @@ class test_bucketlists(BaseTests):
         self.assertEqual(output['message'], 'Bucketlist already exists')
 
     def test_getting_of_all_bucketlists(self):
+        '''Tests retrieving all bucketlists'''
         get_bucketlists = self.client.get('bucketlist/api/bucketlists',
                                           headers=self.get_token())
         self.assertEquals(get_bucketlists.status_code, 200)
 
     def test_accessing_bucketlist_without_logging_in(self):
+        '''Tests Authentication required for all bucketlist transactions'''
         self.bucket = json.dumps(
             {'Bucketname': 'Handling Authentication Tests'})
         create_bucketlist = self.client.post('bucketlist/api/bucketlists',
@@ -58,6 +63,7 @@ class test_bucketlists(BaseTests):
         self.assertEqual(create_bucketlist.status_code, 401)
 
     def test_creating_bucketlist_with_blank_name(self):
+        '''Ensure that bucketlists cannot be created with a blank name'''
         self.bucket = json.dumps(
             {'Bucketname': ''})
         create_bucketlist = self.client.post('bucketlist/api/bucketlists',
@@ -69,6 +75,7 @@ class test_bucketlists(BaseTests):
         self.assertEqual(output['message'], 'Bucketlist name cannot be blank')
 
     def test_deleting_bucketlist(self):
+        '''Tests successful deletion of  bucketlist'''
         token = self.get_token()
         self.bucket = json.dumps(
             {'Bucketname': 'Handling Authentication Tests'})
@@ -83,6 +90,7 @@ class test_bucketlists(BaseTests):
         self.assertEqual(delete_bucketlist.status_code, 200)
 
     def test_deleting_bucketlist_that_does_not_exist(self):
+        '''Ensure that a bucketlist being deleted exists'''
         token = self.get_token()
         self.bucket = json.dumps(
             {'Bucketname': 'Handling Authentication Tests'})
@@ -99,6 +107,7 @@ class test_bucketlists(BaseTests):
         self.assertEqual(output['message'], 'Bucketlist does not exist')
 
     def test_getting_specific_bucketlist(self):
+        '''Tests retrieving a specific bucketlist'''
         token = self.get_token()
         self.bucket = json.dumps(
             {'Bucketname': 'Handling Authentication Tests'})
@@ -113,6 +122,7 @@ class test_bucketlists(BaseTests):
         self.assertEqual(get_bucketlist.status_code, 200)
 
     def test_updating_a_bucketlist(self):
+        '''Tests updating of a bucketlist'''
         token = self.get_token()
         self.bucket = json.dumps(
             {'Bucketname': 'Functionality'})
@@ -130,6 +140,7 @@ class test_bucketlists(BaseTests):
         self.assertEqual(update_bucketlist.status_code, 201)
 
     def test_getting_a_bucketlist_that_does_not_exist(self):
+        '''Tests that retrieving an unexisten bucketlist is unsuccessful'''
         token = self.get_token()
         self.bucket = json.dumps(
             {'Bucketname': 'Handling Authentication Tests'})
@@ -146,6 +157,7 @@ class test_bucketlists(BaseTests):
         self.assertEqual(output['message'], 'Bucketlist does not exist')
 
     def test_post_new_item(self):
+        '''Tests successful creation of a new bucketlist item'''
         token = self.get_token()
         # Create bucketlist
         self.bucket = json.dumps(

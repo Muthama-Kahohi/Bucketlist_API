@@ -3,6 +3,8 @@ from flask_sqlalchemy import SQLAlchemy
 from Config.config import configuration
 from flask_restful import Api
 
+
+#Adds blueprint to cater for common patterns
 api_blue_print = Blueprint('api', __name__, url_prefix='/bucketlist/api')
 # initialize the api class
 api = Api(api_blue_print)
@@ -15,6 +17,8 @@ def create_app(config_name):
     app.config.from_object(configuration[config_name])
     configuration[config_name].init_app(app)
     db.init_app(app)
+
+
 
     app.register_blueprint(api_blue_print)
 
