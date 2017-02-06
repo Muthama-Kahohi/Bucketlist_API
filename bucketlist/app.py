@@ -94,13 +94,12 @@ class BucketLists(Resource):
             if buckets:
                 if buckets.has_next:
                     next_page = str(
-                        request.url_root) + 'bucketlist/api/bucketlist?q=' + str(q) + '&page=' + str(page + 1)
+                        request.url_root) + 'bucketlist/api/bucketlists?q=' + q + '&page=' + str(int(page)+ 1)
                 else:
                     next_page = 'None'
 
                 if buckets.has_prev:
-                    prev = str(request.url_root) + 'bucketlist/api/bucketlists?q=' + \
-                        str(q) + '&page=' + str(page - 1)
+                    prev = str(request.url_root) + 'bucketlist/api/bucketlists?q=' + q + '&page=' + str(int(page) - 1)
                 else:
                     prev = 'None'
                 buckets = [bucket for bucket in bkts]
@@ -116,18 +115,19 @@ class BucketLists(Resource):
             buckets = Bucketlist.query.filter_by(
                 created_by=g.user.id).paginate(int(page), int(limit), False)
             bkts = buckets.items
+            buckets = [bucket for bucket in bkts]
+            return marshal(buckets, Bucketlist_marshaller)
             if buckets:
                 if buckets.has_next:
                     next_page = str(
                         request.url_root) + \
-                        'bucketlist/api/bucketlist?limit=' + str(limit) + \
-                        '&page=' + str(page + 1)
+                        'bucketlist/api/bucketlists?limit=' + str(int(limit)) + \
+                        '&page=' + str(int(page) + 1)
                 else:
                     next_page = 'None'
 
                 if buckets.has_prev:
-                    prev = str(request.url_root) + 'bucketlist/api/bucketlist?limit=' + \
-                        str(limit) + '&page=' + str(page - 1)
+                    prev = str(request.url_root) + 'bucketlist/api/bucketlists?limit=' + str(int(limit)) + '&page=' + str(int(page) - 1)
 
                 else:
                     prev = 'None'
@@ -137,8 +137,7 @@ class BucketLists(Resource):
                     'next': next_page,
                     'prev': prev}
                 return response
-        bucketlists = Bucketlist.query.filter_by(created_by=g.user.id).all()
-        return (marshal(bucketlists, Bucketlist_marshaller), 200)
+
 
     @auth.login_required
     def post(self):
