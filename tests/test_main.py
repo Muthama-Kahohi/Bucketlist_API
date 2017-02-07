@@ -1,4 +1,4 @@
-from base_tests import BaseTests
+from base_tests import *
 import json
 
 
