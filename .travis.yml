@@ -1,12 +1,12 @@
 language: python
 python:
-  - "3.5"
+  - "2.7"
 # command to install dependencies
 install:
   - pip install -r requirements.txt
   - pip install coveralls
 before_script:
-  - export PYTHONPATH=`pwd`:$PYTHONPATH
+  - export PYTHONPATH=`pwd`
 # command to run tests
 script: "nosetests --with-coverage --cover-package=bucketlist"
 after_success:
