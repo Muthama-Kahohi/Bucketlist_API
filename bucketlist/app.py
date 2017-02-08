@@ -163,8 +163,6 @@ class BucketLists(Resource):
             if bucket is not None:
                 return({'message': 'Bucketlist already exists'}, 400)
             bucketlist = Bucketlist(bucketlist_name=bucketname,
-                                    date_created=datetime.datetime.now(),
-                                    date_modified=datetime.datetime.now(),
                                     created_by=g.user.id)
             bucketlist.add(bucketlist)
             return({'message': 'Bucketlist successfully created'}, 201)
@@ -226,8 +224,6 @@ class BucketListItems(Resource):
         if len(item_name) > 0:
             item = BucketListItem(item_name=item_name,
                                   bucketlist_name=id,
-                                  date_created=datetime.datetime.now(),
-                                  date_modified=datetime.datetime.now(),
                                   done=False)
 
             item.add(item)

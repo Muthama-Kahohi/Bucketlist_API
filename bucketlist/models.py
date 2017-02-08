@@ -60,12 +60,14 @@ class User(db.Model, CRUD):
         user = User.query.get(data['id'])
         return user
 
+
 class Bucketlist(db.Model, CRUD):
     __tablename__ = 'bucketlist'
     id = db.Column(db.Integer, primary_key=True)
     bucketlist_name = db.Column(db.Integer, unique=True)
-    date_created = db.Column(db.DateTime)
-    date_modified = db.Column(db.DateTime)
+    date_created = db.Column(db.DateTime, default=db.func.now())
+    date_modified = db.Column(
+        db.DateTime, default=db.func.now(), onupdate=db.func.now())
     created_by = db.Column(db.String(10), db.ForeignKey('users.username'))
     bucketowner = db.relationship(
         'BucketListItem', backref='owner_bucket', lazy='dynamic')
@@ -80,7 +82,7 @@ class BucketListItem(db.Model, CRUD):
     item_name = db.Column(db.String(10))
     bucketlist_name = db.Column(db.Integer,
                                 db.ForeignKey('bucketlist.id'))
-    date_created = db.Column(db.DateTime)
-    date_modified = db.Column(db.DateTime, onupdate=datetime.utcnow)
+    date_created = db.Column(db.DateTime, default=db.func.now())
+    date_modified = db.Column(
+        db.DateTime, default=db.func.now(), onupdate=datetime.utcnow)
     done = db.Column(db.Boolean)
-
