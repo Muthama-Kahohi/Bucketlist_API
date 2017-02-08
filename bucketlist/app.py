@@ -15,7 +15,6 @@ auth = HTTPTokenAuth(scheme='Token')
 def verify_token(token):
     # Authenticating the token
     user = User.verify_authentication_token(token)
-    print(user)
     if not user:
         return False
     g.user = user
@@ -242,7 +241,6 @@ class BucketItem(Resource):
 
     @auth.login_required
     def put(self, bucket_id, item_id):
-        print(bucket_id, item_id)
         parser = reqparse.RequestParser()
         parser.add_argument('item_name')
         parser.add_argument('done')
