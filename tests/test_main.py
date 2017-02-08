@@ -190,3 +190,28 @@ class test_bucketlists(BaseTests):
         search = self.client.get('bucketlist/api/bucketlists?q=Handling',
                                  headers=token)
         self.assertEqual(search.status_code, 200)
+
+    def test_pagination_bucketlist(self):
+        '''Tests bucketlist is successfully searched if it exists'''
+        token = self.get_token()
+        self.bucket = json.dumps(
+            {'Bucketname': 'Testing Pagination'})
+        self.bucket2 = json.dumps({'Bucketname': 'Test searching'})
+        create_bucketlist = self.client.post('bucketlist/api/bucketlists',
+                                             data=self.bucket,
+                                             content_type='application/json',
+                                             headers=token)
+        create_second_bucketlist = self.client.post('bucketlist/api/bucketlists',
+                                                    data=self.bucket,
+                                                    content_type='application/json',
+                                                    headers=token)
+
+        self.assertEqual(create_bucketlist.status_code, 201)
+        output = json.loads(create_bucketlist.data)
+        self.assertEqual(output['message'], 'Bucketlist successfully created')
+        page_one = self.client.get('bucketlist/api/bucketlists?limit=1&page=1',
+                                   headers=token)
+        self.assertEqual(page_one.status_code, 200)
+        page_two = self.client.get('bucketlist/api/bucketlists?limit=1&page=2',
+                                   headers=token)
+        self.assertEqual(page_two.status_code, 200)
