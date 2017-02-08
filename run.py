@@ -1,6 +1,6 @@
 from bucketlist import create_app, db
 from flask_restful import Api
-from bucketlist.app import BucketItem, BucketListItems, LoginApi, RegisterApi, BucketLists, BucketList
+from bucketlist.app import *
 from flask_script import Manager
 from flask_migrate import Migrate, MigrateCommand
 
