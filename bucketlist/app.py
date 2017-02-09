@@ -35,14 +35,14 @@ class RegisterApi(Resource):
             parser.add_argument('password', required=True,
                                 help="Password cannot be blank")
             credentials = parser.parse_args()
-            uname = credentials['username']
-            pword = credentials['password']
+            user_name = credentials['username']
+            pass_word = credentials['password']
             # Ensure that registration details are not blank
-            if len(uname) <= 0 or len(pword) <= 0:
+            if len(user_name) <= 0 or len(pass_word) <= 0:
                 return({'message': 'please provide all credentials'}, 400)
-            user = User(username=uname, password=pword)
+            user = User(username=user_name, password=pass_word)
             # Hashes the password
-            user.hash_password(pword)
+            user.hash_password(pass_word)
             # Adds to the database
             user.add(user)
             return ({'message': 'user created'}, 201)
@@ -64,16 +64,16 @@ class LoginApi(Resource):
         parser.add_argument('password', required=True,
                             help="Password cannot be blank")
         credentials = parser.parse_args()
-        uname = credentials['username']
-        pword = credentials['password']
+        user_name = credentials['username']
+        pass_word = credentials['password']
 
         # confirm that the user does exist
-        user = User.query.filter_by(username=uname).first()
+        user = User.query.filter_by(username=user_name).first()
         if user is None:
             return({'message': 'user does not exist'}, 404)
         else:
             # verify the password
-            if user.veriry_password(pword, user.password):
+            if user.veriry_password(pass_word, user.password):
                 token = user.generate_token()
                 return({'message': 'login successful',
                         'Authorization': token.decode('ascii')}, 200)
