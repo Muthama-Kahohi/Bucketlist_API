@@ -13,7 +13,6 @@ app_context = app.app_context()
 app_context.push()
 db.create_all()
 
-
 api.add_resource(RegisterApi, '/bucketlist/api/auth/register')
 
 api.add_resource(LoginApi, '/bucketlist/api/auth/login')
