@@ -121,7 +121,7 @@ class BucketLists(Resource):
                     buckets, Bucketlist_marshaller),
                     'next': next_page,
                     'prev': prev}
-                return response
+                return response, 200
             else:
                 return {'message': ' Bucketlist not found'}, 404
 
@@ -149,7 +149,7 @@ class BucketLists(Resource):
                     buckets, Bucketlist_marshaller),
                     'next': next_page,
                     'prev': prev}
-                return response
+                return response, 200
 
     @auth.login_required
     def post(self):
@@ -184,7 +184,7 @@ class BucketList(Resource):
         bucketlists = Bucketlist.query.filter_by(
             id=id, created_by=g.user.id).first()
         if bucketlists:
-            return marshal(bucketlists, Bucketlist_marshaller)
+            return marshal(bucketlists, Bucketlist_marshaller), 200
         else:
             return ({'message': 'Bucketlist does not exist'}, 404)
 
@@ -217,7 +217,7 @@ class BucketList(Resource):
             id=id, created_by=g.user.id).first()
         if bucketlist:
             bucketlist.delete(bucketlist)
-            return ({'message': 'Bucketlist deleted'})
+            return ({'message': 'Bucketlist deleted'}, 200)
         else:
             return ({'message': 'Bucketlist does not exist'}, 404)
 
