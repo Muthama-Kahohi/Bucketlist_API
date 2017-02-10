@@ -27,6 +27,8 @@ The API is token based. Registration is through a username and a hashed password
 
 ## How to use
 You can send and requests and receive responses using Postman or curl.
+## Running the tests
+1. run the command `nosetests tests --with-coverage --cover-package=bucketlist`
 
 ## Registration
 Registration requires a username and a password to be sent a request and if valid shoud return a status code 201 to indicate creation.
