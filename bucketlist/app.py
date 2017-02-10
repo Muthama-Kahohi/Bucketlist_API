@@ -21,6 +21,11 @@ def verify_token(token):
     return True
 
 
+class start(Resource):
+    def get(self):
+        return ({"message": "Welcome to my Api."}, 200)
+
+
 class RegisterApi(Resource):
     '''Registers a new user'''
 
@@ -91,7 +96,7 @@ class BucketLists(Resource):
     def get(self):
         # Adds page and limit variables to be used for pagination
         page = request.args.get('page', 1)
-        limit = request.args.get('limit', 1) or 100
+        limit = request.args.get('limit', 20) or 100
         # Adds a query attribute specified in the url
         q = request.args.get('q')
         if q:
@@ -124,8 +129,6 @@ class BucketLists(Resource):
             buckets = Bucketlist.query.filter_by(
                 created_by=g.user.id).paginate(int(page), int(limit), False)
             bkts = buckets.items
-            buckets = [bucket for bucket in bkts]
-            return marshal(buckets, Bucketlist_marshaller)
             if buckets:
                 if buckets.has_next:
                     next_page = str(
@@ -228,18 +231,22 @@ class BucketListItems(Resource):
         parser = reqparse.RequestParser()
         parser.add_argument('item_name', required=True,
                             help='Item name cannot be blank')
-
         item_details = parser.parse_args()
         item_name = item_details['item_name']
-        if len(item_name) > 0:
-            item = BucketListItem(item_name=item_name,
-                                  bucketlist_name=id,
-                                  done=False)
+        bucket = Bucketlist.query.filter_by(
+            id=id).first()
+        if bucket:
+            if len(item_name) > 0:
+                item = BucketListItem(item_name=item_name,
+                                      bucketlist_name=id,
+                                      done=False)
 
-            item.add(item)
-            return({'message': 'Bucket Item successfully added'}, 201)
+                item.add(item)
+                return({'message': 'Bucket Item successfully added'}, 201)
+            else:
+                return({'message': 'Item name cannot be blank'}, 400)
         else:
-            return({'message': 'Item name cannot be blank'})
+            return({'message': 'No such bucketlist'}, 404)
 
 
 class BucketItem(Resource):
@@ -256,24 +263,28 @@ class BucketItem(Resource):
         itemdetails = parser.parse_args()
         item_name = itemdetails['item_name']
         done = itemdetails['done']
-
-        blist_item = BucketListItem.query.filter_by(
-            id=item_id, bucketlist_name=bucket_id).first()
-        # Filters what item details are to be updated
-        if blist_item:
-            if item_name and done:
-                blist_item.item_name = item_name
-                blist_item.done = done
-                blist_item.update()
-            elif item_name and not done:
-                blist_item.item_name = item_name
-                blist_item.update()
-            elif done and not item_name:
-                blist_item.done = done
-                blist_item.update()
-            return({'message': 'Item successfully updated'})
+        bucket = Bucketlist.query.filter_by(
+            id=bucket_id).first()
+        if bucket:
+            blist_item = BucketListItem.query.filter_by(
+                id=item_id, bucketlist_name=bucket_id).first()
+            # Filters what item details are to be updated
+            if blist_item:
+                if item_name and done:
+                    blist_item.item_name = item_name
+                    blist_item.done = done
+                    blist_item.update()
+                elif item_name and not done:
+                    blist_item.item_name = item_name
+                    blist_item.update()
+                elif done and not item_name:
+                    blist_item.done = done
+                    blist_item.update()
+                return({'message': 'Item successfully updated'}, 201)
+            else:
+                return({'message': 'No such item'}, 404)
         else:
-            return({'message': 'No such item'})
+            return({'message': 'No such bucketlist'}, 404)
 
     @auth.login_required
     def delete(self, bucket_id, item_id):
