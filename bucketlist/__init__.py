@@ -11,15 +11,11 @@ api = Api(api_blue_print)
 
 db = SQLAlchemy()
 
-
 def create_app(config_name):
     app = Flask(__name__)
     app.config.from_object(configuration[config_name])
     configuration[config_name].init_app(app)
     db.init_app(app)
-
-
-
     app.register_blueprint(api_blue_print)
 
     return app

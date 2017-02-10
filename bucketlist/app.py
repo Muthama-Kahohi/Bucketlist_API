@@ -150,7 +150,9 @@ class BucketLists(Resource):
 
     @auth.login_required
     def post(self):
-        '''Adds a new bucketlist'''
+        '''
+        Adds a new bucketlist
+        '''
         parser = reqparse.RequestParser()
         parser.add_argument('Bucketname', required=True,
                             help="Bucket name cannot be blank")
@@ -171,7 +173,9 @@ class BucketLists(Resource):
 
 
 class BucketList(Resource):
-    '''Retrievs specific bucketlist using an id'''
+    '''
+    Retrievs specific bucketlist using an id
+    '''
     @auth.login_required
     def get(self, id):
         bucketlists = Bucketlist.query.filter_by(
@@ -183,7 +187,9 @@ class BucketList(Resource):
 
     @auth.login_required
     def put(self, id):
-        '''Updates a specific bucketlist using the id'''
+        '''
+        Updates a specific bucketlist using the id
+        '''
         # Queries the db to ensure that search a bucketlist exists
         bucketlist = Bucketlist.query.filter_by(
             id=id, created_by=g.user.id).first()
@@ -201,7 +207,9 @@ class BucketList(Resource):
 
     @auth.login_required
     def delete(self, id):
-        '''deletes specific bucketlist as per the id provided'''
+        '''
+        deletes specific bucketlist as per the id provided
+        '''
         bucketlist = Bucketlist.query.filter_by(
             id=id, created_by=g.user.id).first()
         if bucketlist:
@@ -214,7 +222,9 @@ class BucketList(Resource):
 class BucketListItems(Resource):
     @auth.login_required
     def post(self, id):
-        '''Adds a item to a bucketlist id given'''
+        '''
+        Adds a item to a bucketlist id given
+        '''
         parser = reqparse.RequestParser()
         parser.add_argument('item_name', required=True,
                             help='Item name cannot be blank')
@@ -233,7 +243,9 @@ class BucketListItems(Resource):
 
 
 class BucketItem(Resource):
-    '''Updates a bucketlist item with item_id in bucketlist with id bucket_id'''
+    '''
+    Updates a bucketlist item with item_id in bucketlist with id bucket_id
+    '''
 
     @auth.login_required
     def put(self, bucket_id, item_id):
@@ -265,11 +277,13 @@ class BucketItem(Resource):
 
     @auth.login_required
     def delete(self, bucket_id, item_id):
-        '''Deletes bucketlist item with provided id'''
+        '''
+        Deletes bucketlist item with provided id
+        '''
         blist_item = BucketListItem.query.filter_by(
             id=item_id, bucketlist_name=bucket_id).first()
         if blist_item:
             blist_item.delete(blist_item)
-            return ({'message': 'Item deleted'})
+            return ({'message': 'Item deleted'}, 200)
         else:
-            return({'message': 'No such bucketlist'})
+            return({'message': 'No such bucketlist'}, 404)
