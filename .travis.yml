@@ -8,6 +8,6 @@ install:
 before_script:
   - export PYTHONPATH=`pwd`
 # command to run tests
-script: "nosetests --with-coverage --cover-package=bucketlist"
+script: "nosetests bucketlist/tests --with-coverage --cover-package=bucketlist"
 after_success:
   - coveralls
