@@ -86,3 +86,4 @@ class BucketListItem(db.Model, CRUD):
     date_modified = db.Column(
         db.DateTime, default=db.func.now(), onupdate=datetime.utcnow)
     done = db.Column(db.Boolean)
+

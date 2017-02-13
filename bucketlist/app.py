@@ -1,14 +1,18 @@
-from flask_restful import Resource, reqparse, marshal, request
+from flask_restful import Resource, reqparse, marshal, request, Api
 from flask_httpauth import HTTPTokenAuth
 from bucketlist.models import User, Bucketlist, BucketListItem
-from bucketlist.__init__ import db
 from sqlalchemy import exc
-from flask import g
+from flask import g, Blueprint
 import datetime
 from bucketlist.marshallers import *
 
 
 auth = HTTPTokenAuth(scheme='Token')
+
+#Adds blueprint to cater for common patterns
+api_blue_print = Blueprint('api', __name__, url_prefix='/bucketlist/api')
+# initialize the api class
+api = Api(api_blue_print)
 
 
 @auth.verify_token
@@ -298,3 +302,18 @@ class BucketItem(Resource):
             return ({'message': 'Item deleted'}, 200)
         else:
             return({'message': 'No such bucketlist'}, 404)
+
+# Registers resources
+api.add_resource(RegisterApi, '/auth/register')
+
+api.add_resource(LoginApi, '/auth/login')
+
+api.add_resource(BucketLists, '/bucketlists')
+api.add_resource(
+    BucketList, '/bucketlists/<int:id>')
+
+api.add_resource(
+    BucketListItems, '/bucketlists/<int:id>/items')
+
+api.add_resource(
+    BucketItem, '/bucketlists/<int:bucket_id>/items/<int:item_id>')
