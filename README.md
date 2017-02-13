@@ -1,6 +1,6 @@
 [![Coverage Status](https://coveralls.io/repos/github/Muthama-Kahohi/Bucketlist_API/badge.svg?branch=develop)](https://coveralls.io/github/Muthama-Kahohi/Bucketlist_API?branch=develop)
 
-https://travis-ci.org/Muthama-Kahohi/Bucketlist_API.svg?branch=develop
+[![Build Status](https://travis-ci.org/Muthama-Kahohi/Bucketlist_API.svg?branch=develop)](https://travis-ci.org/Muthama-Kahohi/Bucketlist_API)
 
 # Bucketlist API
 This is a python based API that keeps records of a users bucketlist.
