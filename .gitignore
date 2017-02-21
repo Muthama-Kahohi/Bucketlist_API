@@ -1,5 +1,5 @@
 #Environment
-b_env/
+flask/
 
 #byte objects #
 *.pyc
@@ -10,6 +10,7 @@ b_env/
 *.log
 *.sql
 *.sqlite
+*.db
  
 # OS generated files #
 ######################

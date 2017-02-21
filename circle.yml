@@ -1,0 +1,8 @@
+machine:
+  python:
+    version: 3.5.2
+
+dependencies:
+  pre:
+    - export PYTHONPATH=`pwd`
+    - pip install -r requirements.txt
